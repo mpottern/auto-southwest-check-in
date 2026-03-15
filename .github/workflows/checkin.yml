@@ -1,0 +1,31 @@
+name: Southwest Auto Check-In
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 17 17 3 *'
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Chromium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
+      - name: Run check-in script
+        run: |
+          python3 southwest.py ${{ secrets.CONFIRMATION_NUMBER }} ${{ secrets.FIRST_NAME }} ${{ secrets.LAST_NAME }}
